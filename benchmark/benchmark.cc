@@ -293,6 +293,7 @@ int main() {
 
     double tol = 1e-6;
 
+    /*    
     // P3P
     poselib::ProblemOptions p3p_opt = options;
     p3p_opt.n_point_point_ = 3;
@@ -326,6 +327,7 @@ int main() {
     p4pf_opt.n_point_line_ = 0;
     p4pf_opt.unknown_focal_ = true;
     results.push_back(poselib::benchmark_w_extra<poselib::SolverP4PF>(1e4, p4pf_opt, tol));
+    */
 
     // P2P2PL
     poselib::ProblemOptions p2p2pl_opt = options;
@@ -338,6 +340,8 @@ int main() {
     p6lp_opt.n_line_point_ = 6;
     results.push_back(poselib::benchmark<poselib::SolverP6LP>(1e4, p6lp_opt, tol));
 
+    /*
+    
     // P5LP Radial
     poselib::ProblemOptions p5lp_radial_opt = options;
     p5lp_radial_opt.n_line_point_ = 5;
@@ -476,6 +480,7 @@ int main() {
     homo4pt_opt.n_point_point_ = 4;
     results.push_back(poselib::benchmark_homography<poselib::SolverHomography4pt<false>>(1e5, homo4pt_opt, tol));
     results.push_back(poselib::benchmark_homography<poselib::SolverHomography4pt<true>>(1e5, homo4pt_opt, tol));
+    */
 
     display_result(results);
 
