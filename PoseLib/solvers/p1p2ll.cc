@@ -32,16 +32,15 @@ The original code in this file was rewritten according to the new solver propose
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "PoseLib/camera_pose.h"
-#include "PoseLib/misc/univariate.cc"
+#include "p1p2ll.h"
 
 namespace poselib {
 
-int p1p2ll(const std::vector<Eigen::Vector3d> &xp, std::vector<Eigen::Vector3d> &Xp,
-           const std::vector<Eigen::Vector3d> &l, std::vector<Eigen::Vector3d> &X,
-           std::vector<Eigen::Vector3d> &V, std::vector<CameraPose> *output) {
-	
-	//fix the instability
+int p1p2ll(const std::vector<Eigen::Vector3d> &xp, const std::vector<Eigen::Vector3d> &Xp0,
+           const std::vector<Eigen::Vector3d> &l, const std::vector<Eigen::Vector3d> &X,
+           const std::vector<Eigen::Vector3d> &V, std::vector<CameraPose> *output) {
+           
+        //fix the instability
 	const Eigen::Vector3d Vn = V[0]/V[0].norm();
 	const double dd1 = std::sqrt(Vn(0)*Vn(0) + Vn(1)*Vn(1));
 	const Eigen::Vector3d axis1(Vn(1)/dd1, -Vn(0)/dd1, 0);
@@ -49,11 +48,11 @@ int p1p2ll(const std::vector<Eigen::Vector3d> &xp, std::vector<Eigen::Vector3d> 
 	Eigen::Matrix3d A1x;
 	A1x << 0, -axis1(2), axis1(1), axis1(2), 0, -axis1(0), -axis1(1), axis1(0), 0;
 	const Eigen::Matrix3d Rf = Eigen::Matrix3d::Identity() + std::sin(ang1)*A1x + (1-std::cos(ang1))*A1x*A1x;
-	Xp[0] = Rf*Xp[0];
-	X[0] = Rf*X[0];
-	X[1] = Rf*X[1];
-	V[0] = Rf*V[0];
-	V[1] = Rf*V[1];
+	const Eigen::Vector3d Xp = Rf*Xp0[0];
+	const Eigen::Vector3d X_0 = Rf*X[0];
+	const Eigen::Vector3d X_1 = Rf*X[1];
+	const Eigen::Vector3d V_0 = Rf*V[0];
+	const Eigen::Vector3d V_1 = Rf*V[1];
 
 	//Normalize the input
 	//n1 = l[0], n2 = l[1]
@@ -89,15 +88,11 @@ int p1p2ll(const std::vector<Eigen::Vector3d> &xp, std::vector<Eigen::Vector3d> 
 	//P is Xp[0]
 	//L1 is X[0], L3 is X[1]
 	//L2 is X[0]+V[0], L4 is X[1]+V[1]
-	const Eigen::Vector3d Tw0w1 = -Xp[0];
-	const Eigen::Vector3d L11 = X[0]+Tw0w1;
-	const Eigen::Vector3d L12 = X[0]+V[0]+Tw0w1;
-	const Eigen::Vector3d L13 = X[1]+Tw0w1;
-	const Eigen::Vector3d L14 = X[1]+V[1]+Tw0w1;
-
-	//std::cout << "\n\n" << V[0] << "\n\n";
-	//it does not like when V[0](2) is small
-	//TODO TODO TODO find out when does this happen and how to prevent it
+	const Eigen::Vector3d Tw0w1 = -Xp;
+	const Eigen::Vector3d L11 = X_0+Tw0w1;
+	const Eigen::Vector3d L12 = X_0+V_0+Tw0w1;
+	const Eigen::Vector3d L13 = X_1+Tw0w1;
+	const Eigen::Vector3d L14 = X_1+V_1+Tw0w1;
 
 	//extract the scalar coefficients
 	const double a1 = D1(0);
@@ -167,17 +162,7 @@ int p1p2ll(const std::vector<Eigen::Vector3d> &xp, std::vector<Eigen::Vector3d> 
         const double aa4 = 2*e6*e10*e11 - 2*e9*e10*e11 + e5*e11*e11 - e8*e11*e11 - e3*e11*e13 - e3*e10*c9 - e2*e11*c9 + 2*e1*e13*c9;
         const double aa5 = e6*e11*e11 - e9*e11*e11 - e3*e11*c9 + e1*c9*c9;
 
-	/*std::cout << "\n";
-	std::cout << X1 << " " << X2 << " " << X2-X1 << "\n";
-	std::cout << Y1 << " " << Y2 << " " << Y2-Y1 << "\n";
-	std::cout << Z1 << " " << Z2 << " " << Z2-Z1 << "\n";
-	std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << "\n";*/
-	//std::cout << a4 << " " << b4 << " " << a4/b4 << "\n";
-	/*std::cout << X3 << " " << X4 << " " << Y3 << " " << Y4 << " " << Z3 << " " << Z4 << "\n";
-	std::cout << kw1 << " " << zw10 << " " << zw20 << " " << zw11 << " " << zw21 << "\n";
-	std::cout << c7 << " " << c8 << " " << c9 << " " << c10 << " " << c11 << " " << c12 << "\n";
-        std::cout << e1 << " " << e2 << " " << e3 << " " << e4 << " " << e5 << " " << e6 << " " << e7  << " " << e8  << " " << e9  << " " << e10  << " " << e11  << " " << c11  << " " << e13  << " " << c9  << "\n";*/
-        //std::cout << aa1 << " " << aa2 << " " << aa3 << " " << aa4 << " " << aa5 << "\n";
+        //std::cout << aa1*x*x*x*x + aa2*x*x*x + aa3*x*x + aa4*x + aa5 << "\n\n\n\n";
         double roots[4];
         const int num_sols = poselib::univariate::solve_quartic_real(aa1_inv*aa2, aa1_inv*aa3, aa1_inv*aa4, aa1_inv*aa5, roots);
 	
@@ -234,6 +219,7 @@ int p1p2ll(const std::vector<Eigen::Vector3d> &xp, std::vector<Eigen::Vector3d> 
 			//output->push_back(pose_b);
 			output->at(n_sols) = pose_a;
 			output->at(n_sols+1) = pose_b;*/
+			
 
 			output->emplace_back(Raf, ta);
 			output->emplace_back(Rbf, tb);
