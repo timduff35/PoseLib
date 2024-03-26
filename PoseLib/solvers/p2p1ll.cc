@@ -32,7 +32,6 @@ The original code in this file was rewritten according to the new solver propose
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include <iostream>
 #include "PoseLib/camera_pose.h"
 
 namespace poselib {
