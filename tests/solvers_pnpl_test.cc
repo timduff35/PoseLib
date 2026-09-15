@@ -8,8 +8,8 @@ using namespace poselib;
 namespace {
 
 // Generate from world geometry, independently of the solver's elimination.
-bool check_mixed_pose(int points, double thickness, bool incident, bool change_coordinates) {
-    auto rng = test_rng::make_rng("mixed_pose");
+bool check_solvers_pnpl(int points, double thickness, bool incident, bool change_coordinates) {
+    auto rng = test_rng::make_rng("solvers_pnpl");
     for (int sample = 0; sample < 300; ++sample) {
         const Eigen::Matrix3d R =
             Eigen::AngleAxisd(rng.uniform(-3.14, 3.14), test_rng::symmetric_vec3(rng).normalized()).toRotationMatrix();
@@ -75,7 +75,7 @@ bool check_mixed_pose(int points, double thickness, bool incident, bool change_c
             error = std::min(error, (rotation - expected.R()).norm() +
                                         (pose.t - expected.t).norm() / std::max(1.0, expected.t.norm()));
         }
-        REQUIRE_SMALL_M(error, 1e-7, test_rng::case_id("mixed_pose", sample));
+        REQUIRE_SMALL_M(error, 1e-7, test_rng::case_id("solvers_pnpl", sample));
         // Verify the complete returned set, not only the ground-truth root,
         // after reordering matches and changing the world-line anchors.
         if (sample < 20) {
@@ -103,18 +103,18 @@ bool check_mixed_pose(int points, double thickness, bool incident, bool change_c
     return true;
 }
 
-bool test_p2p1ll_generic() { return check_mixed_pose(2, 1.0, false, false); }
-bool test_p1p2ll_generic() { return check_mixed_pose(1, 1.0, false, false); }
-bool test_p2p1ll_coplanar() { return check_mixed_pose(2, 0.0, false, false); }
-bool test_p1p2ll_coplanar() { return check_mixed_pose(1, 0.0, false, false); }
-bool test_p2p1ll_near_coplanar() { return check_mixed_pose(2, 1e-8, false, false); }
-bool test_p1p2ll_near_coplanar() { return check_mixed_pose(1, 1e-8, false, false); }
-bool test_p2p1ll_incident() { return check_mixed_pose(2, 1.0, true, false); }
-bool test_p1p2ll_incident() { return check_mixed_pose(1, 1.0, true, false); }
-bool test_p2p1ll_coordinates() { return check_mixed_pose(2, 1.0, false, true); }
-bool test_p1p2ll_coordinates() { return check_mixed_pose(1, 1.0, false, true); }
+bool test_p2p1ll_generic() { return check_solvers_pnpl(2, 1.0, false, false); }
+bool test_p1p2ll_generic() { return check_solvers_pnpl(1, 1.0, false, false); }
+bool test_p2p1ll_coplanar() { return check_solvers_pnpl(2, 0.0, false, false); }
+bool test_p1p2ll_coplanar() { return check_solvers_pnpl(1, 0.0, false, false); }
+bool test_p2p1ll_near_coplanar() { return check_solvers_pnpl(2, 1e-8, false, false); }
+bool test_p1p2ll_near_coplanar() { return check_solvers_pnpl(1, 1e-8, false, false); }
+bool test_p2p1ll_incident() { return check_solvers_pnpl(2, 1.0, true, false); }
+bool test_p1p2ll_incident() { return check_solvers_pnpl(1, 1.0, true, false); }
+bool test_p2p1ll_coordinates() { return check_solvers_pnpl(2, 1.0, false, true); }
+bool test_p1p2ll_coordinates() { return check_solvers_pnpl(1, 1.0, false, true); }
 
-bool test_mixed_pose_axis_aligned() {
+bool test_solvers_pnpl_axis_aligned() {
     for (int points : {2, 1}) {
         for (bool parallel : {false, true}) {
             for (double angle : {0.0, 3.14159265358979323846}) {
@@ -155,7 +155,7 @@ bool test_mixed_pose_axis_aligned() {
     return true;
 }
 
-bool test_mixed_pose_unrelated_observations() {
+bool test_solvers_pnpl_unrelated_observations() {
     auto rng = test_rng::make_rng("unrelated");
     for (int points : {2, 1}) {
         for (int sample = 0; sample < 1000; ++sample) {
@@ -191,8 +191,8 @@ bool test_mixed_pose_unrelated_observations() {
 
 } // namespace
 
-std::vector<Test> register_mixed_pose_test() {
-    return {TEST(test_mixed_pose_axis_aligned), TEST(test_mixed_pose_unrelated_observations),
+std::vector<Test> register_solvers_pnpl_test() {
+    return {TEST(test_solvers_pnpl_axis_aligned), TEST(test_solvers_pnpl_unrelated_observations),
             TEST(test_p2p1ll_generic),          TEST(test_p1p2ll_generic),
             TEST(test_p2p1ll_coplanar),         TEST(test_p1p2ll_coplanar),
             TEST(test_p2p1ll_near_coplanar),    TEST(test_p1p2ll_near_coplanar),

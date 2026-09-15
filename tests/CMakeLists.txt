@@ -1,7 +1,9 @@
 add_executable(run_tests
     run_tests.cc
-    mixed_pose_test.cc
-    solver_primitives_test.cc
+    solvers_pnpl_test.cc
+    univariate_test.cc
+    p3p_common_test.cc
+    decompositions_test.cc
     camera_models_test.cc
     hybrid_ransac_test.cc
     ransac_test.cc
