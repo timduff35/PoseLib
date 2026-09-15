@@ -31,7 +31,6 @@
 #include "PoseLib/misc/decompositions.h"
 #include "PoseLib/misc/univariate.h"
 
-// Derivation and matching notation: docs/mixed_point_line_solvers.tex.
 namespace poselib {
 
 int p2p1ll(const std::vector<Eigen::Vector3d> &xp, const std::vector<Eigen::Vector3d> &Xp,

@@ -31,7 +31,6 @@
 #include "PoseLib/misc/univariate.h"
 #include "p3p_common.h"
 
-// Derivation and matching notation: docs/mixed_point_line_solvers.tex.
 namespace poselib {
 namespace {
 // Intersect two homogeneous conics using a degenerate member of their pencil.
