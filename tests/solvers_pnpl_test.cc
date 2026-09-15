@@ -192,10 +192,16 @@ bool test_solvers_pnpl_unrelated_observations() {
 } // namespace
 
 std::vector<Test> register_solvers_pnpl_test() {
-    return {TEST(test_solvers_pnpl_axis_aligned), TEST(test_solvers_pnpl_unrelated_observations),
-            TEST(test_p2p1ll_generic),          TEST(test_p1p2ll_generic),
-            TEST(test_p2p1ll_coplanar),         TEST(test_p1p2ll_coplanar),
-            TEST(test_p2p1ll_near_coplanar),    TEST(test_p1p2ll_near_coplanar),
-            TEST(test_p2p1ll_incident),         TEST(test_p1p2ll_incident),
-            TEST(test_p2p1ll_coordinates),      TEST(test_p1p2ll_coordinates)};
+    return {TEST(test_solvers_pnpl_axis_aligned),
+            TEST(test_solvers_pnpl_unrelated_observations),
+            TEST(test_p2p1ll_generic),
+            TEST(test_p1p2ll_generic),
+            TEST(test_p2p1ll_coplanar),
+            TEST(test_p1p2ll_coplanar),
+            TEST(test_p2p1ll_near_coplanar),
+            TEST(test_p1p2ll_near_coplanar),
+            TEST(test_p2p1ll_incident),
+            TEST(test_p1p2ll_incident),
+            TEST(test_p2p1ll_coordinates),
+            TEST(test_p1p2ll_coordinates)};
 }
