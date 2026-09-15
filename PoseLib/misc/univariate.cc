@@ -87,22 +87,6 @@ int solve_quadratic_real(double a, double b, double c, Eigen::Vector2d roots[2])
     return quadratic_real(a, b, c, roots);
 }
 
-int solve_quadratic_real(double a, double b, double c, double roots[2], QuadraticStrategy strategy) {
-    if (strategy == QuadraticStrategy::LEGACY)
-        return solve_quadratic_real(a, b, c, roots);
-    Eigen::Vector2d homogeneous[2];
-    const int count = solve_quadratic_real(a, b, c, homogeneous);
-    int finite = 0;
-    for (int i = 0; i < count; ++i) {
-        if (homogeneous[i](1) != 0.0) {
-            const double x = homogeneous[i](0) / homogeneous[i](1);
-            if (std::isfinite(x))
-                roots[finite++] = x;
-        }
-    }
-    return finite;
-}
-
 /* Sign of component with largest magnitude */
 inline double sign2(const std::complex<double> z) {
     if (std::abs(z.real()) > std::abs(z.imag()))

@@ -32,10 +32,6 @@ bool test_projective_quadratic() {
     REQUIRE_EQ(univariate::solve_quadratic_real(1, 0, 1, roots), 0);
     REQUIRE_EQ(univariate::solve_quadratic_real(1, std::numeric_limits<double>::quiet_NaN(), 1, roots), 0);
     double affine[2];
-    REQUIRE_EQ(univariate::solve_quadratic_real(0, 1, -2, affine, univariate::QuadraticStrategy::STABLE), 1);
-    REQUIRE_EQ(affine[0], 2.0);
-    REQUIRE_EQ(univariate::solve_quadratic_real(1, 0, 0, affine, univariate::QuadraticStrategy::STABLE), 1);
-    REQUIRE_EQ(affine[0], 0.0);
     REQUIRE_EQ(univariate::solve_quadratic_real(1, -2, 1, affine), 2);
     REQUIRE_EQ(affine[0], 1.0);
     REQUIRE_EQ(affine[1], 1.0);
